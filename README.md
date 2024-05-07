@@ -2,11 +2,7 @@
 
 [KAN: Kolmogorov-Arnold Networks](https://arxiv.org/abs/2404.19756) is a promising challenger to traditional MLPs. We're thrilled about integrating KAN into [NeRF](https://www.matthewtancik.com/nerf)! Is KAN suited for **view synthesis** tasks? What challenges will we face? How will we tackle them? We provide our initial observations and future discussion!
 
-<div style="text-align:center;">
-  <video src="asset/main.mp4" width="640" height="360" controls>
-    Your browser does not support the video tag.
-  </video>
-</div>
+https://github.com/Tavish9/KANeRF/assets/60593268/0d1ae7c6-e937-4552-b414-ba39f7624a3c
 
 # Installation
 
@@ -52,8 +48,8 @@ We integrate KAN and [NeRFacto](https://docs.nerf.studio/nerfology/methods/nerfa
 | PSNR                          | 33.69                                                                             | 32.67                                                                                  | 33.10                                                                           |
 | SSIM                          | 0.973                                                                             | 0.962                                                                                  | 0.966                                                                           |
 | Loss                          | ![1](asset/loss_nerfacto.png)                                                     | ![1](asset/loss_tiny_nerfactory.png)                                                   | ![1](asset/loss_kanerf.png)                                                     |
-| reconstruction result (rgb)   | <video src="asset/nerfacto_rgb.mp4" width="512" height="512" controls>.</video>   | <video src="asset/nerfacto_tiny_rgb.mp4" width="512" height="512" controls>.</video>   | <video src="asset/kanerf_rgb.mp4" width="512" height="512" controls>.</video>   |
-| reconstruction result (depth) | <video src="asset/nerfacto_depth.mp4" width="512" height="512" controls>.</video> | <video src="asset/nerfacto_tiny_depth.mp4" width="512" height="512" controls>.</video> | <video src="asset/kanerf_depth.mp4" width="512" height="512" controls>.</video> |
+| reconstruction result (rgb)   | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/15eb4f45-256b-4ba8-ba5b-8f8c7c4d1b4f" width="512" height="512" controls>.</video>   | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/951a1e02-cfa3-4605-ab58-4dad37d33104" width="512" height="512" controls>.</video>   | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/c11dba85-0ff3-49c6-ae02-b22fa604e00b" width="512" height="512" controls>.</video>   |
+| reconstruction result (depth) | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/53ac72e8-47fb-45c2-ac05-9fbc760326c6" width="512" height="512" controls>.</video> | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/1a825a28-9faa-402d-b79a-5da7b0208318" width="512" height="512" controls>.</video> | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/92e575d3-4927-4c67-9f4d-9ca39a35aa8f" width="512" height="512" controls>.</video> |
 
 KAN has potential for optimization, particularly with regard to accelerating its inference speed. We plane to develop a CUDA-accelerated version of KAN to further enhance its performance :D
 
@@ -61,7 +57,7 @@ KAN has potential for optimization, particularly with regard to accelerating its
 
 
 <div style="text-align:center;">
-  <img src="image_url_here" alt="Alt text" style="width:50%; height:auto;">
+  <img src="asset/node.png" alt="Alt text" style="width:50%; height:auto;">
 </div>
 
 ## Contact us

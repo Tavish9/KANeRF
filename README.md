@@ -6,7 +6,7 @@ https://github.com/Tavish9/KANeRF/assets/60593268/0d1ae7c6-e937-4552-b414-ba39f7
 
 # Installation
 
-KANeRF is buid based on [nerfstudio](https://docs.nerf.studio/quickstart/installation.html#) and [kan](https://kindxiaoming.github.io/pykan/).  Please refer to the website for detailed installation instructions if you encounter any problems.
+KANeRF is build based on [nerfstudio](https://docs.nerf.studio/quickstart/installation.html#) and [kan](https://kindxiaoming.github.io/pykan/).  Please refer to the website for detailed installation instructions if you encounter any problems.
 
 ```bash
 # create python env
@@ -30,7 +30,7 @@ pip install pykan
 
 # Performance Comparision
 
-We integrate KAN and [NeRFacto](https://docs.nerf.studio/nerfology/methods/nerfacto.html), and compare KANeRF with NeRFacto in terms of model parameters, training time, novel view synthesis performance, etc. on the [Blender dataset](https://github.com/bmild/nerf?tab=readme-ov-file#project-page--video--paper--data). Under the same network settings, KAN achieves superior performance in novel view synthesis compared to MLP, suggesting that KAN possesses a more powerful fitting capability. However, KAN's inference and training processes are significantly slower than those of MLP. Furthermore, with a comparable number of parameters, KAN underperforms MLP.
+We integrate KAN and [NeRFacto](https://docs.nerf.studio/nerfology/methods/nerfacto.html) and compare KANeRF with NeRFacto in terms of model parameters, training time, novel view synthesis performance, etc. on the [Blender dataset](https://github.com/bmild/nerf?tab=readme-ov-file#project-page--video--paper--data). Under the same network settings, KAN **slightly** outperforms MLP in novel view synthesis, suggesting that KAN possesses a more powerful fitting capability. However, KAN's inference and training speed are significantly** slower than those of MLP. Furthermore, with a comparable number of parameters, KAN underperforms MLP.
 
 | Model                         | NeRFacto                                                                          | NeRFacto Tiny                                                                          | KANeRF                                                                          |
 | ----------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -51,9 +51,9 @@ We integrate KAN and [NeRFacto](https://docs.nerf.studio/nerfology/methods/nerfa
 | result (rgb)   | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/15eb4f45-256b-4ba8-ba5b-8f8c7c4d1b4f" width="512" height="512" controls>.</video>   | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/951a1e02-cfa3-4605-ab58-4dad37d33104" width="512" height="512" controls>.</video>   | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/c11dba85-0ff3-49c6-ae02-b22fa604e00b" width="512" height="512" controls>.</video>   |
 | result (depth) | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/53ac72e8-47fb-45c2-ac05-9fbc760326c6" width="512" height="512" controls>.</video> | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/1a825a28-9faa-402d-b79a-5da7b0208318" width="512" height="512" controls>.</video> | <video src="https://github.com/Tavish9/KANeRF/assets/60593268/92e575d3-4927-4c67-9f4d-9ca39a35aa8f" width="512" height="512" controls>.</video> |
 
-KAN has potential for optimization, particularly with regard to accelerating its inference speed. We plane to develop a CUDA-accelerated version of KAN to further enhance its performance :D
+KAN has the potential for optimization, particularly with regard to accelerating its inference speed. We plan to develop a CUDA-accelerated version of KAN to further enhance its performance :D
 
-* The Visulization of KanNeRF
+* The Visualization of KanNeRF
 
 
 <div style="text-align:center;">

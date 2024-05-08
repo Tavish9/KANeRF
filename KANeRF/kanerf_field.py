@@ -1,9 +1,14 @@
-from kan import KAN
+from efficient_kan import KAN
 
-from typing import Literal, Optional
+from typing import Literal, Optional, Tuple
+import torch
 from torch import Tensor, nn
 
+from nerfstudio.cameras.rays import RaySamples
+from nerfstudio.data.scene_box import SceneBox
+from nerfstudio.field_components.activations import trunc_exp
 from nerfstudio.fields.nerfacto_field import NerfactoField
+from nerfstudio.field_components.encodings import HashEncoding
 from nerfstudio.field_components.spatial_distortions import SpatialDistortion
 
 class KANeRFactoField(NerfactoField):
@@ -40,9 +45,8 @@ class KANeRFactoField(NerfactoField):
         self,
         aabb: Tensor,
         num_images: int,
-        grid: int = 3,
-        k: int = 3,
-        kan_device: str = "cuda",
+        grid_size: int = 3,
+        spline_order: int = 3,
         num_layers: int = 2,
         hidden_dim: int = 64,
         geo_feat_dim: int = 15,
@@ -92,59 +96,85 @@ class KANeRFactoField(NerfactoField):
             spatial_distortion,
             implementation,
         )
+        self.implementation = implementation
 
+        self.mlp_base_grid = HashEncoding(
+            num_levels=num_levels,
+            min_res=base_res,
+            max_res=max_res,
+            log2_hashmap_size=log2_hashmap_size,
+            features_per_level=features_per_level,
+            implementation=implementation,
+        )
         self.mlp_base_mlp = KAN(
-            width=[self.mlp_base_grid.get_out_dim()]
+            layers_hidden=[self.mlp_base_grid.get_out_dim()]
             + [hidden_dim] * num_layers
             + [1 + self.geo_feat_dim],
-            device=kan_device,
-            grid=grid,
-            k=k,
-            seed=42,
+            grid_size=grid_size,
+            spline_order=spline_order,
         )
-        self.mlp_base[1] = self.mlp_base_mlp
 
         if self.use_transient_embedding:
             self.mlp_transient = KAN(
-                width=[self.geo_feat_dim + self.transient_embedding_dim]
+                layers_hidden=[self.geo_feat_dim + self.transient_embedding_dim]
                 + [hidden_dim_transient] * num_layers_transient
                 +[hidden_dim_transient],
-                device=kan_device,
-                grid=grid,
-                k=k,
-                seed=42,
+                grid_size=grid_size,
+                spline_order=spline_order,
             )
 
         if self.use_semantics:
             self.mlp_semantics = KAN(
-                width=[self.geo_feat_dim]
+                layers_hidden=[self.geo_feat_dim]
                 + [64, 64]
                 + [hidden_dim_transient],
-                device=kan_device,
-                grid=grid,
-                k=k,
-                seed=42,
+                grid_size=grid_size,
+                spline_order=spline_order,
             )
 
         if self.use_pred_normals:
             self.mlp_pred_normals = KAN(
-                width=[self.geo_feat_dim + self.position_encoding.get_out_dim()]
+                layers_hidden=[self.geo_feat_dim + self.position_encoding.get_out_dim()]
                 + [64] * 3
                 + [hidden_dim_transient],
-                device=kan_device,
-                grid=grid,
-                k=k,
-                seed=42,
+                grid_size=grid_size,
+                spline_order=spline_order,
             )
 
         self.mlp_head_base = KAN(
-            width=[self.direction_encoding.get_out_dim() + self.geo_feat_dim + self.appearance_embedding_dim]
+            layers_hidden=[self.direction_encoding.get_out_dim() + self.geo_feat_dim + self.appearance_embedding_dim]
             + [hidden_dim_color] * num_layers_color
             + [3],
-            device=kan_device,
-            grid=grid,
-            k=k,
-            seed=42,
+            grid_size=grid_size,
+            spline_order=spline_order,
         )
 
         self.mlp_head = nn.Sequential(self.mlp_head_base, nn.Sigmoid())
+
+    def get_density(self, ray_samples: RaySamples) -> Tuple[Tensor, Tensor]:
+        """Computes and returns the densities."""
+        if self.spatial_distortion is not None:
+            positions = ray_samples.frustums.get_positions()
+            positions = self.spatial_distortion(positions)
+            positions = (positions + 2.0) / 4.0
+        else:
+            positions = SceneBox.get_normalized_positions(ray_samples.frustums.get_positions(), self.aabb)
+        # Make sure the tcnn gets inputs between 0 and 1.
+        selector = ((positions > 0.0) & (positions < 1.0)).all(dim=-1)
+        positions = positions * selector[..., None]
+        self._sample_locations = positions
+        if not self._sample_locations.requires_grad:
+            self._sample_locations.requires_grad = True
+        positions_flat = positions.view(-1, 3)
+        grid_encoding = self.mlp_base_grid(positions_flat)
+        grid_encoding = grid_encoding.float() if self.implementation == "tcnn" else grid_encoding
+        h = self.mlp_base_mlp(grid_encoding).view(*ray_samples.frustums.shape, -1)
+        density_before_activation, base_mlp_out = torch.split(h, [1, self.geo_feat_dim], dim=-1)
+        self._density_before_activation = density_before_activation
+
+        # Rectifying the density with an exponential is much more stable than a ReLU or
+        # softplus, because it enables high post-activation (float32) density outputs
+        # from smaller internal (float16) parameters.
+        density = trunc_exp(density_before_activation.to(positions))
+        density = density * selector[..., None]
+        return density, base_mlp_out

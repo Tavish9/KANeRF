@@ -24,8 +24,8 @@ kanerf_method = MethodSpecification(
         pipeline=VanillaPipelineConfig(
             datamanager=VanillaDataManagerConfig(
                 dataparser=NerfstudioDataParserConfig(train_split_fraction=0.99),
-                train_num_rays_per_batch=512,
-                eval_num_rays_per_batch=512,
+                train_num_rays_per_batch=4096,
+                eval_num_rays_per_batch=4096,
             ),
             model=KANeRFModelConfig(
                 hidden_dim=8,

@@ -7,7 +7,7 @@ https://github.com/Tavish9/KANeRF/assets/60593268/0d1ae7c6-e937-4552-b414-ba39f7
 # Update News
 * [x] Release the implementation of KANeRF based on [PyKAN](https://kindxiaoming.github.io/pykan/).
 * [x] 🔥🔥🔥 Release an efficient implementation of KANeRF based on [Efficient-KAN](https://github.com/Blealtan/efficient-kan), achiving 15x speedup! 🎉
-* [ ] 🎉🎉🎉 We will conduct more evaluation, stay tuned! : D
+
 # Installation
 
 KANeRF is buid based on [nerfstudio](https://docs.nerf.studio/quickstart/installation.html#) and [Efficient-KAN](https://github.com/Blealtan/efficient-kan).  Please refer to the website for detailed installation instructions if you encounter any problems.
